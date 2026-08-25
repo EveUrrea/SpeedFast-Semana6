@@ -1,6 +1,5 @@
 package app;
 
-import model.Pedido;
 import model.PedidoComida;
 import model.PedidoEncomienda;
 import model.PedidoExpress;
@@ -9,38 +8,39 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("========== SISTEMA SPEEDFAST ==========");
+        PedidoComida comida = new PedidoComida(
+                "001",
+                "Av. Italia 456",
+                4
+        );
 
-        // Objetos de las subclases guardados en referencias de tipo Pedido
-        Pedido pedidoComida =
-                new PedidoComida(101, "Avenida Providencia 123");
+        PedidoEncomienda encomienda = new PedidoEncomienda(
+                "002",
+                "Av. Independencia 123",
+                6
+        );
 
-        Pedido pedidoEncomienda =
-                new PedidoEncomienda(102, "Calle Los Alerces 456");
+        PedidoExpress express = new PedidoExpress(
+                "003",
+                "Av. Apoquindo 1500",
+                7
+        );
 
-        Pedido pedidoExpress =
-                new PedidoExpress(103, "Avenida Las Condes 789");
+        System.out.println("=== PEDIDOS SPEEDFAST ===");
+        System.out.println();
 
-        // Arreglo que permite demostrar el polimorfismo
-        Pedido[] pedidos = {
-                pedidoComida,
-                pedidoEncomienda,
-                pedidoExpress
-        };
+        comida.mostrarResumen();
+        System.out.println("Tiempo estimado de entrega: "
+                + comida.calcularTiempoEntrega() + " minutos");
+        System.out.println();
 
-        String[] repartidores = {
-                "Juan Pérez",
-                "Camila Soto",
-                "Luis Díaz"
-        };
+        encomienda.mostrarResumen();
+        System.out.println("Tiempo estimado de entrega: "
+                + encomienda.calcularTiempoEntrega() + " minutos");
+        System.out.println();
 
-        // Ejecución de los métodos sobrescritos y sobrecargados
-        for (int i = 0; i < pedidos.length; i++) {
-            pedidos[i].asignarRepartidor();
-            pedidos[i].asignarRepartidor(repartidores[i]);
-        }
-
-        System.out.println("\n=======================================");
-        System.out.println("Asignación de pedidos finalizada.");
+        express.mostrarResumen();
+        System.out.println("Tiempo estimado de entrega: "
+                + express.calcularTiempoEntrega() + " minutos");
     }
 }
