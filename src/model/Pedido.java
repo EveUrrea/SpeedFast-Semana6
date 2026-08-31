@@ -2,50 +2,51 @@ package model;
 
 public abstract class Pedido {
 
-    private String idPedido;
-    private String direccionEntrega;
-    private double distanciaKm;
+    protected int id;
+    protected String direccion;
+    protected double distancia;
+    protected String repartidor;
+    protected String estado;
 
-    // Constructor
-    public Pedido(String idPedido, String direccionEntrega, double distanciaKm) {
-        this.idPedido = idPedido;
-        this.direccionEntrega = direccionEntrega;
-        this.distanciaKm = distanciaKm;
+    public Pedido(int id, String direccion, double distancia) {
+        this.id = id;
+        this.direccion = direccion;
+        this.distancia = distancia;
+        this.repartidor = "Sin asignar";
+        this.estado = "Pendiente";
     }
 
-    // Getters
-    public String getIdPedido() {
-        return idPedido;
-    }
-
-    public String getDireccionEntrega() {
-        return direccionEntrega;
-    }
-
-    public double getDistanciaKm() {
-        return distanciaKm;
-    }
-
-    // Setters
-    public void setIdPedido(String idPedido) {
-        this.idPedido = idPedido;
-    }
-
-    public void setDireccionEntrega(String direccionEntrega) {
-        this.direccionEntrega = direccionEntrega;
-    }
-
-    public void setDistanciaKm(double distanciaKm) {
-        this.distanciaKm = distanciaKm;
-    }
-
-    // Método común para todos los pedidos
     public void mostrarResumen() {
-        System.out.println(getClass().getSimpleName() + " #" + idPedido);
-        System.out.println("Dirección: " + direccionEntrega);
-        System.out.println("Distancia: " + distanciaKm + " km");
+        System.out.println("Pedido #" + id);
+        System.out.println("Dirección: " + direccion);
+        System.out.println("Distancia: " + distancia + " km");
+        System.out.println("Repartidor asignado: " + repartidor);
+        System.out.println("Estado: " + estado);
     }
 
-    // Método abstracto que cada subclase debe implementar
+    public abstract void asignarRepartidor();
+
+    // Sobrecarga
+    public void asignarRepartidor(String nombre) {
+        repartidor = nombre;
+        System.out.println("Repartidor asignado manualmente: " + nombre);
+    }
+
     public abstract int calcularTiempoEntrega();
+
+    public int getId() {
+        return id;
+    }
+
+    public String getRepartidor() {
+        return repartidor;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 }

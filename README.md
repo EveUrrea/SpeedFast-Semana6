@@ -1,170 +1,166 @@
-# SpeedFastApp - Semana 2
+# SpeedFastApp - Semana 3
 
 ## Desarrollo Orientado a Objetos II
 
-Proyecto desarrollado para la actividad de la Semana 2 de la asignatura Desarrollo Orientado a Objetos II.
+Proyecto desarrollado para la actividad de la Semana 3 de la asignatura Desarrollo Orientado a Objetos II.
 
-En esta actividad se implementa una clase abstracta y una jerarquía de clases para representar distintos tipos de pedidos de la empresa **SpeedFast**.
+El sistema representa una aplicación de entregas para la empresa **SpeedFast**, aplicando conceptos de Programación Orientada a Objetos como herencia, abstracción, polimorfismo e interfaces.
+
+---
 
 ## Objetivo
 
-Aplicar conceptos de Programación Orientada a Objetos utilizando:
+Desarrollar un sistema de gestión de pedidos utilizando:
 
-* Clases abstractas.
-* Herencia.
-* Sobrescritura de métodos.
-* Reutilización de código.
-* Polimorfismo.
-* Métodos y atributos comunes.
+- Herencia.
+- Clases abstractas.
+- Sobrescritura de métodos.
+- Sobrecarga de métodos.
+- Polimorfismo.
+- Interfaces.
+- Colecciones mediante ArrayList.
+- Separación de responsabilidades.
+
+---
 
 ## Estructura del proyecto
 
-El proyecto está organizado de la siguiente manera:
+El proyecto está compuesto por una clase abstracta llamada `Pedido` y tres clases derivadas:
 
-```text
-src
-├── app
-│   └── Main.java
-│
-└── model
-    ├── Pedido.java
-    ├── PedidoComida.java
-    ├── PedidoEncomienda.java
-    └── PedidoExpress.java
-```
+- `PedidoComida`
+- `PedidoEncomienda`
+- `PedidoExpress`
+
+Además, se implementan las siguientes interfaces:
+
+- `Despachable`
+- `Cancelable`
+- `Rastreable`
+
+La clase `Main` permite ejecutar y comprobar el funcionamiento completo del sistema.
+
+---
 
 ## Clase abstracta Pedido
 
-La clase `Pedido` corresponde a la clase padre de los distintos tipos de pedidos.
+La clase `Pedido` contiene los atributos y comportamientos comunes de todos los pedidos:
 
-Contiene los siguientes atributos comunes:
+- ID del pedido.
+- Dirección de entrega.
+- Distancia.
+- Repartidor.
+- Estado del pedido.
 
-* `idPedido`
-* `direccionEntrega`
-* `distanciaKm`
+También contiene el método implementado:
 
-Además, contiene el método:
+`mostrarResumen()`
 
-```java
-mostrarResumen()
-```
+y el método abstracto:
 
-Este método permite mostrar la información básica de cada pedido.
+`calcularTiempoEntrega()`
 
-También se declara el método abstracto:
+Cada subclase implementa su propia lógica para calcular el tiempo estimado de entrega.
 
-```java
-calcularTiempoEntrega()
-```
+---
 
-Este método debe ser implementado por cada una de las clases derivadas, ya que el cálculo del tiempo de entrega depende del tipo de pedido.
+## Polimorfismo
 
-## Clases derivadas
+El proyecto utiliza polimorfismo mediante sobrescritura y sobrecarga de métodos.
+
+### Sobrescritura
+
+Cada tipo de pedido sobrescribe:
+
+`asignarRepartidor()`
+
+De esta manera, cada clase puede asignar automáticamente un repartidor diferente.
+
+También se sobrescribe:
+
+`calcularTiempoEntrega()`
+
+permitiendo que cada tipo de pedido utilice una lógica distinta para calcular su tiempo de entrega.
+
+### Sobrecarga
+
+La clase `Pedido` incorpora el método:
+
+`asignarRepartidor(String nombre)`
+
+Este método permite realizar una asignación manual del repartidor.
+
+---
+
+## Interfaces
+
+Se utilizan tres interfaces para separar responsabilidades dentro del sistema.
+
+### Despachable
+
+Contiene el método:
+
+`despachar()`
+
+Permite cambiar el estado de un pedido a despachado.
+
+### Cancelable
+
+Contiene el método:
+
+`cancelar()`
+
+Permite cancelar un pedido.
+
+### Rastreable
+
+Contiene el método:
+
+`verHistorial()`
+
+Permite visualizar información asociada a los pedidos almacenados en el historial.
+
+---
+
+## Simulación
+
+La clase `Main` crea tres pedidos diferentes:
 
 ### PedidoComida
 
-La clase `PedidoComida` hereda de `Pedido`.
-
-El tiempo estimado de entrega se calcula utilizando:
-
-```text
-15 minutos base + 2 minutos por cada kilómetro
-```
-
-Ejemplo para una distancia de 4 km:
-
-```text
-15 + (2 × 4) = 23 minutos
-```
+- Pedido #101
+- Asignación automática de repartidor.
+- Cálculo del tiempo estimado.
+- Despacho del pedido.
 
 ### PedidoEncomienda
 
-La clase `PedidoEncomienda` hereda de `Pedido`.
-
-El tiempo estimado de entrega se calcula utilizando:
-
-```text
-20 minutos base + 1.5 minutos por cada kilómetro
-```
-
-El resultado es ajustado a un número entero.
-
-Ejemplo para una distancia de 6 km:
-
-```text
-20 + (1.5 × 6) = 29 minutos
-```
+- Pedido #102
+- Asignación manual de repartidor.
+- Cálculo del tiempo estimado.
+- Despacho del pedido.
 
 ### PedidoExpress
 
-La clase `PedidoExpress` hereda de `Pedido`.
+- Pedido #103
+- Asignación automática de repartidor.
+- Cálculo del tiempo estimado.
+- Cancelación del pedido.
 
-Su tiempo base de entrega es:
+Posteriormente, los pedidos son almacenados en un `ArrayList` y se muestra su historial.
 
-```text
-10 minutos
-```
+---
 
-Si la distancia del pedido es mayor a 5 km, se agregan 5 minutos adicionales.
-
-Ejemplo para una distancia de 7 km:
-
-```text
-10 + 5 = 15 minutos
-```
-
-## Clase Main
-
-La clase `Main` crea un objeto de cada tipo de pedido:
-
-* `PedidoComida`
-* `PedidoEncomienda`
-* `PedidoExpress`
-
-Para cada objeto se ejecutan los métodos:
-
-```java
-mostrarResumen()
-calcularTiempoEntrega()
-```
-
-De esta manera se muestran los datos de cada pedido junto con su tiempo estimado de entrega.
-
-## Ejemplo de ejecución
+## Ejemplo de salida
 
 ```text
-=== PEDIDOS SPEEDFAST ===
+----- DEMOSTRACIÓN DE POLIMORFISMO -----
 
-PedidoComida #001
-Dirección: Av. Italia 456
-Distancia: 4.0 km
-Tiempo estimado de entrega: 23 minutos
+Pedido #101 - Tiempo estimado: 30 minutos
+Pedido #102 - Tiempo estimado: 36 minutos
+Pedido #103 - Tiempo estimado: 14 minutos
 
-PedidoEncomienda #002
-Dirección: Av. Independencia 123
-Distancia: 6.0 km
-Tiempo estimado de entrega: 29 minutos
+----- HISTORIAL DE PEDIDOS -----
 
-PedidoExpress #003
-Dirección: Av. Apoquindo 1500
-Distancia: 7.0 km
-Tiempo estimado de entrega: 15 minutos
-```
-
-## Tecnologías utilizadas
-
-* Java
-* IntelliJ IDEA
-* Git
-* GitHub
-
-## Ejecución
-
-1. Abrir el proyecto `SpeedFastApp` en IntelliJ IDEA.
-2. Verificar que exista un JDK configurado.
-3. Ejecutar la clase `Main` ubicada en `src/app`.
-4. Revisar los resultados mostrados en la consola.
-
-## Resultado
-
-El proyecto demuestra el uso de una clase abstracta como base para diferentes tipos de pedidos, permitiendo reutilizar atributos y comportamientos comunes y personalizar el cálculo del tiempo de entrega mediante la sobrescritura de métodos.
+PedidoComida #101 | Repartidor: Luis Díaz | Estado: Despachado
+PedidoEncomienda #102 | Repartidor: Daniela Tapia | Estado: Despachado
+PedidoExpress #103 | Repartidor: Carlos Soto | Estado: Cancelado

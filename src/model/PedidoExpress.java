@@ -1,19 +1,41 @@
 package model;
 
-public class PedidoExpress extends Pedido {
+public class PedidoExpress extends Pedido
+        implements Despachable, Cancelable, Rastreable {
 
-    public PedidoExpress(String idPedido, String direccionEntrega, double distanciaKm) {
-        super(idPedido, direccionEntrega, distanciaKm);
+    public PedidoExpress(int id, String direccion, double distancia) {
+        super(id, direccion, distancia);
+    }
+
+    @Override
+    public void asignarRepartidor() {
+        repartidor = "Carlos Soto";
+        System.out.println("Repartidor automático para pedido express: " + repartidor);
     }
 
     @Override
     public int calcularTiempoEntrega() {
-        int tiempo = 10;
+        return 10 + (int) distancia;
+    }
 
-        if (getDistanciaKm() > 5) {
-            tiempo += 5;
-        }
+    @Override
+    public void despachar() {
+        estado = "Despachado";
+        System.out.println("Pedido express #" + id + " despachado correctamente.");
+    }
 
-        return tiempo;
+    @Override
+    public void cancelar() {
+        estado = "Cancelado";
+        System.out.println("Pedido express #" + id + " cancelado exitosamente.");
+    }
+
+    @Override
+    public void verHistorial() {
+        System.out.println(
+                "PedidoExpress #" + id +
+                        " | Repartidor: " + repartidor +
+                        " | Estado: " + estado
+        );
     }
 }
