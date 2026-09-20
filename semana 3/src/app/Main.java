@@ -1,6 +1,6 @@
 package app;
 
-import model.*;
+import modelo.*;
 
 import java.util.ArrayList;
 

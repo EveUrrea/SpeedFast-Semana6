@@ -1,10 +1,10 @@
 package app;
 
-import model.Pedido;
-import model.PedidoComida;
-import model.PedidoEncomienda;
-import model.PedidoExpress;
-import model.Repartidor;
+import modelo.Pedido;
+import modelo.PedidoComida;
+import modelo.PedidoEncomienda;
+import modelo.PedidoExpress;
+import modelo.Repartidor;
 
 import java.util.Arrays;
 import java.util.List;

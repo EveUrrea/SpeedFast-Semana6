@@ -1,8 +1,8 @@
 package app;
 
-import model.Pedido;
-import model.Repartidor;
-import model.ZonaDeCarga;
+import modelo.Pedido;
+import modelo.Repartidor;
+import modelo.ZonaDeCarga;
 
 public class Main {
 

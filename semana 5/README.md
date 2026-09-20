@@ -16,7 +16,7 @@ Contiene la clase principal encargada de iniciar la aplicación.
 
 - `Main.java`: crea la zona de carga, agrega los pedidos, crea los repartidores e inicia los hilos de ejecución.
 
-### model
+### modelo
 
 Contiene las clases relacionadas con la lógica del sistema.
 
