@@ -1,78 +1,57 @@
 package vista;
 
+import conexion.ConexionBD;
 import modelo.Pedido;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class VentanaListaPedidos extends JFrame {
 
-    private final List<Pedido> listaPedidos;
-    private final DefaultTableModel modeloTabla;
-    private final JTable tablaPedidos;
+    private JTable tablaPedidos;
+    private DefaultTableModel modeloTabla;
 
     public VentanaListaPedidos(List<Pedido> listaPedidos) {
 
-        this.listaPedidos = listaPedidos;
-
         setTitle("SpeedFast - Lista de Pedidos");
-        setSize(750, 400);
+        setSize(650, 400);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout(10, 10));
 
-        // Título
         JLabel lblTitulo = new JLabel(
-                "Listado de Pedidos",
+                "Pedidos registrados",
                 SwingConstants.CENTER
         );
 
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        lblTitulo.setBorder(
-                BorderFactory.createEmptyBorder(15, 10, 10, 10)
-        );
-
         add(lblTitulo, BorderLayout.NORTH);
 
-        // Columnas de la tabla
-        String[] columnas = {
-                "ID",
-                "Dirección",
-                "Distancia (km)",
-                "Tipo",
-                "Repartidor",
-                "Estado"
-        };
-
-        // Modelo de la tabla
-        modeloTabla = new DefaultTableModel(columnas, 0) {
-
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
+        modeloTabla = new DefaultTableModel(
+                new Object[]{"ID", "Cliente", "Dirección", "Estado"},
+                0
+        );
 
         tablaPedidos = new JTable(modeloTabla);
-        tablaPedidos.setRowHeight(25);
 
         JScrollPane scrollPane = new JScrollPane(tablaPedidos);
-
         add(scrollPane, BorderLayout.CENTER);
 
-        // Botón actualizar
-        JButton btnActualizar = new JButton("Actualizar lista");
+        JButton btnActualizar = new JButton("Actualizar");
+
+        btnActualizar.addActionListener(e -> cargarPedidos());
 
         JPanel panelBoton = new JPanel();
         panelBoton.add(btnActualizar);
 
         add(panelBoton, BorderLayout.SOUTH);
 
-        btnActualizar.addActionListener(e -> cargarPedidos());
-
-        // Cargar los pedidos al abrir la ventana
         cargarPedidos();
 
         setVisible(true);
@@ -80,32 +59,38 @@ public class VentanaListaPedidos extends JFrame {
 
     private void cargarPedidos() {
 
-        // Limpiar tabla
         modeloTabla.setRowCount(0);
 
-        // Agregar pedidos actuales
-        for (Pedido pedido : listaPedidos) {
+        String sql = "SELECT id, cliente, direccion, estado FROM pedidos";
 
-            String tipo = pedido.getClass().getSimpleName();
+        try (Connection conexion = ConexionBD.conectar();
+             PreparedStatement stmt = conexion.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
-            if (tipo.equals("PedidoComida")) {
-                tipo = "Comida";
-            } else if (tipo.equals("PedidoEncomienda")) {
-                tipo = "Encomienda";
-            } else if (tipo.equals("PedidoExpress")) {
-                tipo = "Express";
+            while (rs.next()) {
+
+                Object[] fila = {
+                        rs.getInt("id"),
+                        rs.getString("cliente"),
+                        rs.getString("direccion"),
+                        rs.getString("estado")
+                };
+
+                modeloTabla.addRow(fila);
             }
 
-            Object[] fila = {
-                    pedido.getIdPedido(),
-                    pedido.getDireccionEntrega(),
-                    pedido.getDistanciaKm(),
-                    tipo,
-                    pedido.getRepartidor(),
-                    pedido.getEstado()
-            };
+            System.out.println("Pedidos cargados correctamente desde MySQL.");
 
-            modeloTabla.addRow(fila);
+        } catch (SQLException e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error al cargar los pedidos.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+
+            e.printStackTrace();
         }
     }
 }

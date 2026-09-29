@@ -1,9 +1,7 @@
 package vista;
 
+import dao.PedidoDAO;
 import modelo.Pedido;
-import modelo.PedidoComida;
-import modelo.PedidoEncomienda;
-import modelo.PedidoExpress;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,10 +9,9 @@ import java.util.List;
 
 public class VentanaRegistroPedido extends JFrame {
 
-    private JTextField txtId;
+    private JTextField txtCliente;
     private JTextField txtDireccion;
-    private JTextField txtDistancia;
-    private JComboBox<String> cmbTipo;
+    private JComboBox<String> cmbEstado;
 
     private List<Pedido> listaPedidos;
 
@@ -30,155 +27,99 @@ public class VentanaRegistroPedido extends JFrame {
         setLayout(new BorderLayout(10, 10));
 
         JLabel lblTitulo = new JLabel(
-                "Registro de Pedido",
+                "Registrar nuevo pedido",
                 SwingConstants.CENTER
         );
 
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 18));
-        lblTitulo.setBorder(
-                BorderFactory.createEmptyBorder(15, 10, 10, 10)
-        );
 
         add(lblTitulo, BorderLayout.NORTH);
 
-        // Panel del formulario
-        JPanel panelFormulario = new JPanel(
-                new GridLayout(4, 2, 10, 10)
-        );
+        JPanel panelFormulario = new JPanel(new GridLayout(3, 2, 10, 10));
 
         panelFormulario.setBorder(
-                BorderFactory.createEmptyBorder(20, 40, 20, 40)
+                BorderFactory.createEmptyBorder(30, 30, 30, 30)
         );
 
-        txtId = new JTextField();
-        txtDireccion = new JTextField();
-        txtDistancia = new JTextField();
+        panelFormulario.add(new JLabel("Cliente:"));
 
-        cmbTipo = new JComboBox<>(
-                new String[]{"Comida", "Encomienda", "Express"}
-        );
-
-        panelFormulario.add(new JLabel("ID del pedido:"));
-        panelFormulario.add(txtId);
+        txtCliente = new JTextField();
+        panelFormulario.add(txtCliente);
 
         panelFormulario.add(new JLabel("Dirección:"));
+
+        txtDireccion = new JTextField();
         panelFormulario.add(txtDireccion);
 
-        panelFormulario.add(new JLabel("Distancia (km):"));
-        panelFormulario.add(txtDistancia);
+        panelFormulario.add(new JLabel("Estado:"));
 
-        panelFormulario.add(new JLabel("Tipo de pedido:"));
-        panelFormulario.add(cmbTipo);
+        cmbEstado = new JComboBox<>(new String[]{
+                "Pendiente",
+                "En preparación",
+                "En reparto",
+                "Entregado"
+        });
+
+        panelFormulario.add(cmbEstado);
 
         add(panelFormulario, BorderLayout.CENTER);
 
-        // Botón Guardar
         JButton btnGuardar = new JButton("Guardar pedido");
 
+        btnGuardar.addActionListener(e -> guardarPedido());
+
         JPanel panelBoton = new JPanel();
+
         panelBoton.add(btnGuardar);
 
         add(panelBoton, BorderLayout.SOUTH);
-
-        btnGuardar.addActionListener(e -> guardarPedido());
 
         setVisible(true);
     }
 
     private void guardarPedido() {
 
-        String idTexto = txtId.getText().trim();
+        String cliente = txtCliente.getText().trim();
         String direccion = txtDireccion.getText().trim();
-        String distanciaTexto = txtDistancia.getText().trim();
+        String estado = cmbEstado.getSelectedItem().toString();
 
-        // Validar campos vacíos
-        if (idTexto.isEmpty()
-                || direccion.isEmpty()
-                || distanciaTexto.isEmpty()) {
+        if (cliente.isEmpty() || direccion.isEmpty()) {
 
             JOptionPane.showMessageDialog(
                     this,
                     "Debe completar todos los campos.",
-                    "Campos incompletos",
+                    "Advertencia",
                     JOptionPane.WARNING_MESSAGE
             );
 
             return;
         }
 
-        try {
+        PedidoDAO pedidoDAO = new PedidoDAO();
 
-            int id = Integer.parseInt(idTexto);
-            double distancia = Double.parseDouble(distanciaTexto);
+        boolean guardado = pedidoDAO.guardarPedido(
+                cliente,
+                direccion,
+                estado
+        );
 
-            if (id <= 0 || distancia <= 0) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "El ID y la distancia deben ser mayores a 0.",
-                        "Datos inválidos",
-                        JOptionPane.WARNING_MESSAGE
-                );
-                return;
-            }
-
-            // Evitar IDs repetidos
-            for (Pedido pedido : listaPedidos) {
-                if (pedido.getIdPedido() == id) {
-
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Ya existe un pedido con ese ID.",
-                            "ID duplicado",
-                            JOptionPane.WARNING_MESSAGE
-                    );
-
-                    return;
-                }
-            }
-
-            String tipo = (String) cmbTipo.getSelectedItem();
-
-            Pedido nuevoPedido;
-
-            switch (tipo) {
-
-                case "Comida":
-                    nuevoPedido =
-                            new PedidoComida(id, direccion, distancia);
-                    break;
-
-                case "Encomienda":
-                    nuevoPedido =
-                            new PedidoEncomienda(id, direccion, distancia);
-                    break;
-
-                default:
-                    nuevoPedido =
-                            new PedidoExpress(id, direccion, distancia);
-                    break;
-            }
-
-            listaPedidos.add(nuevoPedido);
+        if (guardado) {
 
             JOptionPane.showMessageDialog(
                     this,
-                    "Pedido registrado correctamente.",
-                    "Registro exitoso",
-                    JOptionPane.INFORMATION_MESSAGE
+                    "Pedido registrado correctamente en la base de datos."
             );
 
-            // Limpiar formulario
-            txtId.setText("");
+            txtCliente.setText("");
             txtDireccion.setText("");
-            txtDistancia.setText("");
-            cmbTipo.setSelectedIndex(0);
+            cmbEstado.setSelectedIndex(0);
 
-        } catch (NumberFormatException ex) {
+        } else {
 
             JOptionPane.showMessageDialog(
                     this,
-                    "El ID debe ser un número entero y la distancia un número válido.",
-                    "Datos inválidos",
+                    "No fue posible registrar el pedido.",
+                    "Error",
                     JOptionPane.ERROR_MESSAGE
             );
         }
